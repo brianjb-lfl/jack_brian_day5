@@ -12,39 +12,55 @@ const STORE = {
 };
 
 function generateItemElement(item, itemIndex, template) {
+  
+  let elementString = ''
+  if(STORE.editItem === null){
+    elementString =`<button class='shopping-item-toggle js-item-toggle'>
+                        <span class='button-label'>check</span>
+                      </button>
+                      <button class='shopping-item-edit js-item-edit'>
+                      <span class="button-label">edit</span>
+                      </button>
+                      <button class='shopping-item-delete js-item-delete'>
+                        <span class='button-label'>delete</span>
+                      </button>`;
+    $('#multipurposeLabel').text("Add an item");
+    $('#multipurposeButton').text("Add item");
+  }
+  else {
+    $('.js-shopping-list-entry').val(STORE.listItems[STORE.editItem].name);
+    $('#multipurposeLabel').text("Edit name");
+    $('#multipurposeButton').text("Save");
+  }
   return `
     <li class="js-item-index-element" data-item-index="${itemIndex}">
       <span class="shopping-item js-shopping-item ${item.checked ? "shopping-item__checked" : ''}">${item.name}</span>
-      <div class="shopping-item-controls">
-        <button class="shopping-item-toggle js-item-toggle">
-            <span class="button-label">check</span>
-        </button>
-        <button class="shopping-item-edit js-item-edit">
-          <span class="button-label">edit</span>
-        </button>
-        <button class="shopping-item-delete js-item-delete">
-            <span class="button-label">delete</span>
-        </button>
-      </div>
+      <div class="shopping-item-controls">`
+
+
+          +
+          elementString
+
+          +
+
+       `</div>
     </li>`;
 }
 
-
 function generateShoppingItemsString(shoppingList) {
-  console.log("Generating shopping list element");
+  console.log("Generating shopping list element" + shoppingList);
 
   const items = shoppingList.map((item, index) => generateItemElement(item, index));
   
   return items.join("");
 }
 
-
 function renderShoppingList() {
   // render the shopping list in the DOM
-  console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE.listItems);
-
-  // insert that HTML into the DOM
+  console.log('`renderShoppingList` ran'+ STORE.listItems[STORE.editItem]);
+  // console.log(STORE.editItem);
+  const tempSL = STORE.listItems 
+  const shoppingListItemsString = STORE.editItem === null ? generateShoppingItemsString(STORE.listItems) : generateShoppingItemsString([STORE.listItems[STORE.editItem]]);
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
@@ -53,17 +69,29 @@ function addItemToShoppingList(itemName) {
   STORE.itemList.push({name: itemName, checked: false});
 }
 
+function alterItemOnShoppingList(itemName) {
+  console.log(`Editing "${itemName}" on shopping list`);
+  STORE.listItems[STORE.editItem].name = itemName; 
+  STORE.editItem = null; 
+}
+
 function handleNewItemSubmit() {
   $('#js-shopping-list-form').submit(function(event) {
-
     // add fork based on which button was clicked
-
-    event.preventDefault();
-    console.log('`handleNewItemSubmit` ran');
-    const newItemName = $('.js-shopping-list-entry').val();
-    $('.js-shopping-list-entry').val('');
-    addItemToShoppingList(newItemName);
-    renderShoppingList();
+      event.preventDefault();
+    if(STORE.editItem === null){
+      console.log('`handleNewItemSubmit` ran');
+      const newItemName = $('.js-shopping-list-entry').val();
+      $('.js-shopping-list-entry').val('');
+      addItemToShoppingList(newItemName);
+      renderShoppingList();
+    }
+    else {
+      const editedItemName = $('.js-shopping-list-entry').val();
+      $('.js-shopping-list-entry').val('');
+      alterItemOnShoppingList(editedItemName); 
+      renderShoppingList();
+    }
   });
 }
 
@@ -107,40 +135,16 @@ function handleEditItemClicked() {
   $('.js-shopping-list').on('click', `.js-item-edit`, event => {
    // get id
     const itemIndex = getItemIndexFromElement(event.currentTarget);
-    editModeSetup(itemIndex);
-    $('.js-shopping-list-entry').val(STORE[itemIndex].name);
+    STORE.editItem = itemIndex; 
+    renderShoppingList();
+
+    // edit object within store 
+    // set editItem to null
+    // remove selected input
+    // render list
   });
   console.log('`handleDeleteItemClicked` ran');
 }
-
-function handleSaveButtonClicked(){
-  $('#editForm').on('click', '#multipurposeButton', event => {
-  //  new handle button click
-  //    read new name
-  //    modify STORE element
-  //    change static html back
-  //  render
-
-    const itemIndex = $('#js-shopping-list-form').attr('itIdx');
-    console.log(itemIndex);
-    const newItemName = $('.js-shopping-list-entry').val();
-
-    renderShoppingList();
-    addModeSetup();
-  });
-
-}
-
-// function editModeSetup(itemIdx){
-
-//   $('#js-shopping-list-form').attr('itIdx', `${itemIdx}`);
-// }
-
-// function addModeSetup(){
-//   $('#multipurposeLabel').text("Add an item");
-//   $('#multipurposeButton').text("Add item");
-//   $('#editForm').attr('id', 'js-shopping-list-form');
-// }
 
 function handleShoppingList() {
   renderShoppingList();
