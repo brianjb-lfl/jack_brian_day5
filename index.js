@@ -9,11 +9,12 @@ const STORE = {
     {name: "bread", checked: false}
   ], 
   editItem: null,
-  filterList: false
+  filterList: false,
+  searchItem: ''
 };
 
 function generateItemElement(item, itemIndex, template) {
-  
+  console.log(STORE.searchItem); 
   let elementString = '';
   if(STORE.editItem === null){
     elementString =`<button class='shopping-item-toggle js-item-toggle'>
@@ -34,7 +35,10 @@ function generateItemElement(item, itemIndex, template) {
     $('#multipurposeButton').text("Save");
   }
   return `
-    <li class="js-item-index-element ${(STORE.filterList && STORE.listItems[itemIndex].checked ? 'filtered': '' )}" data-item-index="${itemIndex}">
+    <li class="js-item-index-element 
+    ${(STORE.filterList && STORE.listItems[itemIndex].checked ? 'filtered': '' )} 
+    ${(STORE.listItems[itemIndex].name !== STORE.searchItem && STORE.searchItem !== '' ? ' filtered' : '' )}
+    " data-item-index="${itemIndex}">
       <span class="shopping-item js-shopping-item ${item.checked ? "shopping-item__checked" : ''}">${item.name}</span>
       <div class="shopping-item-controls">`
 
@@ -96,11 +100,6 @@ function handleNewItemSubmit() {
   });
 }
 
-
-
-
-
-
 function handleFilterBClicked(){
   $(`#filterButton`).on('click', event => {
     event.preventDefault();
@@ -113,18 +112,7 @@ function handleFilterBClicked(){
     }
     renderShoppingList();
   } );
-
-
-
 }
-
-
-
-
-
-
-
-
 
 function toggleCheckedForListItem(itemIndex) {
   console.log("Toggling checked property for item at index " + itemIndex);
@@ -177,6 +165,19 @@ function handleEditItemClicked() {
   console.log('`handleDeleteItemClicked` ran');
 }
 
+function handleSearch(){
+  $('#js-search-form').submit(function(event){
+    event.preventDefault(); 
+    console.log("THIS RAN"); 
+    const userInput = $(".js-search").val();
+    STORE.searchItem = userInput; 
+    $(".js-search").val("");
+    renderShoppingList(); 
+    STORE.searchItem = ""; 
+  }); 
+}
+
+
 function handleShoppingList() {
   renderShoppingList();
   handleNewItemSubmit();
@@ -184,6 +185,7 @@ function handleShoppingList() {
   handleDeleteItemClicked();
   handleEditItemClicked();
   handleFilterBClicked();
+  handleSearch(); 
 }
 
 $(handleShoppingList);
