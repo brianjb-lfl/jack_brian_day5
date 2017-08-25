@@ -8,7 +8,8 @@ const STORE = {
     {name: "milk", checked: true},
     {name: "bread", checked: false}
   ], 
-  editItem: null
+  editItem: null,
+  filterList: false
 };
 
 function generateItemElement(item, itemIndex, template) {
@@ -33,7 +34,7 @@ function generateItemElement(item, itemIndex, template) {
     $('#multipurposeButton').text("Save");
   }
   return `
-    <li class="js-item-index-element" data-item-index="${itemIndex}">
+    <li class="js-item-index-element ${(STORE.filterList && STORE.listItems[itemIndex].checked ? 'filtered': '' )}" data-item-index="${itemIndex}">
       <span class="shopping-item js-shopping-item ${item.checked ? "shopping-item__checked" : ''}">${item.name}</span>
       <div class="shopping-item-controls">`
 
@@ -95,6 +96,36 @@ function handleNewItemSubmit() {
   });
 }
 
+
+
+
+
+
+function handleFilterBClicked(){
+  $(`#filterButton`).on('click', event => {
+    event.preventDefault();
+    STORE.filterList = !STORE.filterList;
+    if(STORE.filterList){
+      $('#filterButton').text('remove Filter');
+    }
+    else{
+      $('#filterButton').text('Filter');
+    }
+    renderShoppingList();
+  } );
+
+
+
+}
+
+
+
+
+
+
+
+
+
 function toggleCheckedForListItem(itemIndex) {
   console.log("Toggling checked property for item at index " + itemIndex);
   STORE.listItems[itemIndex].checked = !STORE.listItems[itemIndex].checked;
@@ -152,6 +183,7 @@ function handleShoppingList() {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleEditItemClicked();
+  handleFilterBClicked();
 }
 
 $(handleShoppingList);
