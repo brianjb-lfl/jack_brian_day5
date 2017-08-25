@@ -13,7 +13,7 @@ const STORE = {
 
 function generateItemElement(item, itemIndex, template) {
   
-  let elementString = ''
+  let elementString = '';
   if(STORE.editItem === null){
     elementString =`<button class='shopping-item-toggle js-item-toggle'>
                         <span class='button-label'>check</span>
@@ -59,14 +59,14 @@ function renderShoppingList() {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran'+ STORE.listItems[STORE.editItem]);
   // console.log(STORE.editItem);
-  const tempSL = STORE.listItems 
+  const tempSL = STORE.listItems; 
   const shoppingListItemsString = STORE.editItem === null ? generateShoppingItemsString(STORE.listItems) : generateShoppingItemsString([STORE.listItems[STORE.editItem]]);
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.itemList.push({name: itemName, checked: false});
+  STORE.listItems.push({name: itemName, checked: false});
 }
 
 function alterItemOnShoppingList(itemName) {
@@ -78,7 +78,7 @@ function alterItemOnShoppingList(itemName) {
 function handleNewItemSubmit() {
   $('#js-shopping-list-form').submit(function(event) {
     // add fork based on which button was clicked
-      event.preventDefault();
+    event.preventDefault();
     if(STORE.editItem === null){
       console.log('`handleNewItemSubmit` ran');
       const newItemName = $('.js-shopping-list-entry').val();
