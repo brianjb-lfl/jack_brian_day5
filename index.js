@@ -1,11 +1,15 @@
 'use strict';
 
-const STORE = [
-  {name: "apples", checked: false},
-  {name: "oranges", checked: false},
-  {name: "milk", checked: true},
-  {name: "bread", checked: false}
-];
+const STORE = {
+  listItems: 
+  [
+    {name: "apples", checked: false},
+    {name: "oranges", checked: false},
+    {name: "milk", checked: true},
+    {name: "bread", checked: false}
+  ], 
+  editItem: null
+};
 
 function generateItemElement(item, itemIndex, template) {
   return `
@@ -38,7 +42,7 @@ function generateShoppingItemsString(shoppingList) {
 function renderShoppingList() {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE);
+  const shoppingListItemsString = generateShoppingItemsString(STORE.listItems);
 
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
@@ -46,7 +50,7 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false});
+  STORE.itemList.push({name: itemName, checked: false});
 }
 
 function handleNewItemSubmit() {
@@ -65,7 +69,7 @@ function handleNewItemSubmit() {
 
 function toggleCheckedForListItem(itemIndex) {
   console.log("Toggling checked property for item at index " + itemIndex);
-  STORE[itemIndex].checked = !STORE[itemIndex].checked;
+  STORE.listItems[itemIndex].checked = !STORE.listItems[itemIndex].checked;
 }
 
 function getItemIndexFromElement(item) {
@@ -91,7 +95,7 @@ function handleDeleteItemClicked() {
   // get id
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     // remove from STORE
-    STORE.splice(itemIndex,1);
+    STORE.listItems.splice(itemIndex,1);
     // render
     renderShoppingList();
   });
@@ -127,16 +131,16 @@ function handleSaveButtonClicked(){
 
 }
 
-function editModeSetup(itemIdx){
+// function editModeSetup(itemIdx){
 
-  $('#js-shopping-list-form').attr('itIdx', `${itemIdx}`);
-}
+//   $('#js-shopping-list-form').attr('itIdx', `${itemIdx}`);
+// }
 
-function addModeSetup(){
-  $('#multipurposeLabel').text("Add an item");
-  $('#multipurposeButton').text("Add item");
-  $('#editForm').attr('id', 'js-shopping-list-form');
-}
+// function addModeSetup(){
+//   $('#multipurposeLabel').text("Add an item");
+//   $('#multipurposeButton').text("Add item");
+//   $('#editForm').attr('id', 'js-shopping-list-form');
+// }
 
 function handleShoppingList() {
   renderShoppingList();
